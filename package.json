@@ -1,0 +1,23 @@
+{
+  "name": "electoral-search",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
+    "cheerio": "^1.0.0-rc.12",
+    "crypto": "^1.0.1",
+    "express": "^4.19.2",
+    "http-proxy-middleware": "^3.0.0",
+    "https": "^1.0.0",
+    "puppeteer": "^22.12.1"
+  }
+}

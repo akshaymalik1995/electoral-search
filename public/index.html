@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Electoral Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div class="container mx-auto max-w-7xl my-24">
+      <h1 class="text-3xl font-bold text-center">Electoral Search</h1>
+      <form action="">
+        <div class="grid grid-cols-2 border py-4 px-8 rounded-lg my-12">
+          <div class="mb-4 col-span-1 mx-auto">
+            <label for="epic" class="block font-bold my-2 text-gray-700"
+              >Epic Number</label
+            >
+            <input
+              name="epicNumber"
+              type="text"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-64 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+
+          <div class="mb-4 col-span-1 mx-auto">
+            <label for="state" class="block font-bold my-2 text-gray-700"
+              >State</label
+            >
+            <select
+              name="stateCd"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value="NA">Select Your State</option>
+              <option value="U01">Andaman &amp; Nicobar Islands</option>
+              <option value="S01">Andhra Pradesh</option>
+              <option value="S02">Arunachal Pradesh</option>
+              <option value="S03">Assam</option>
+              <option value="S04">Bihar</option>
+              <option value="U02">Chandigarh</option>
+              <option value="S26">Chattisgarh</option>
+              <option value="U03">
+                Dadra &amp; Nagar Haveli and Daman &amp; Diu
+              </option>
+              <option value="S05">Goa</option>
+              <option value="S06">Gujarat</option>
+              <option value="S07">Haryana</option>
+              <option value="S08">Himachal Pradesh</option>
+              <option value="U08">Jammu and Kashmir</option>
+              <option value="S27">Jharkhand</option>
+              <option value="S10">Karnataka</option>
+              <option value="S11">Kerala</option>
+              <option value="U09">Ladakh</option>
+              <option value="U06">Lakshadweep</option>
+              <option value="S12">Madhya Pradesh</option>
+              <option value="S13">Maharashtra</option>
+              <option value="S14">Manipur</option>
+              <option value="S15">Meghalaya</option>
+              <option value="S16">Mizoram</option>
+              <option value="S17">Nagaland</option>
+              <option value="U05">NCT OF Delhi</option>
+              <option value="S18">Odisha</option>
+              <option value="U07">Puducherry</option>
+              <option value="S19">Punjab</option>
+              <option value="S20">Rajasthan</option>
+              <option value="S21">Sikkim</option>
+              <option value="S22">Tamil Nadu</option>
+              <option value="S29">Telangana</option>
+              <option value="S23">Tripura</option>
+              <option value="S24">Uttar Pradesh</option>
+              <option value="S28">Uttarakhand</option>
+              <option value="S25">West Bengal</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4 my-4 flex items-center justify-center gap-16">
+          <div><img width="200" src="" alt="" /></div>
+          <div>
+            <div>
+              <label
+                for="captchaData"
+                class="block font-bold mb-2 text-gray-700"
+              >
+                Enter captcha
+              </label>
+              <input
+                type="text"
+                name="captchaData"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="my-16 flex justify-center">
+          <button
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+      <div class="result-table"></div>
+    </div>
+  </body>
+
+  <script>
+    async function showCaptcha() {
+      const response = await fetch("/api/captcha");
+      const responseData = await response.json();
+      console.log(responseData);
+      const img = document.querySelector("img");
+
+      img.id = responseData.id;
+      img.src = responseData.captcha;
+    }
+
+    function getInputs() {
+      const epicNumber = document.querySelector("input[name=epicNumber]").value;
+      const stateCd = document.querySelector("select").value;
+      const captchaData = document.querySelector(
+        "input[name=captchaData]"
+      ).value;
+      const pageId = document.querySelector("img").id;
+      return { epicNumber, stateCd, captchaData, pageId };
+    }
+
+    async function submitForm(e) {
+      e.preventDefault();
+      const inputs = getInputs();
+      const response = await fetch("/api/electoral-search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputs),
+      });
+      const responseData = await response.json();
+      if (responseData.status === "error") {
+        alert(responseData.message);
+
+        return;
+      }
+      const tableElement = document.createElement("table");
+      tableElement.classList.add("table-auto");
+      tableElement.innerHTML = responseData.data;
+      document.querySelector(".result-table").appendChild(tableElement);
+    }
+
+    document.querySelector("button").addEventListener("click", submitForm);
+
+    showCaptcha();
+  </script>
+</html>
