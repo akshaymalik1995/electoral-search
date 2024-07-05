@@ -149,10 +149,26 @@
         return;
       }
       const tableElement = document.createElement("table");
-      tableElement.classList.add("table-auto");
-      tableElement.innerHTML = responseData.data;
-      document.querySelector(".result-table").innerHTML =
-        tableElement.outerHTML;
+      tableElement.classList.add(
+        "table-auto",
+        "w-full",
+        "p-2",
+        "border",
+        "border-spacing-2",
+        "rounded-lg",
+        "shadow-lg",
+        "overflow-hidden",
+        "mt-4"
+      );
+      if (!responseData.data) {
+        document.querySelector(".result-table").innerHTML =
+          "<h2 class='text-center p-4 border-2 text-4xl' >No data found</h2>";
+      } else {
+        tableElement.innerHTML = responseData.data;
+        document.querySelector(".result-table").innerHTML =
+          tableElement.outerHTML;
+      }
+
       document.querySelector("button").innerText = "Submit";
       showCaptcha();
     }

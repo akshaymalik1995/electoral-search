@@ -82,6 +82,7 @@ app.post("/api/electoral-search", async (req, res) => {
         await new Promise(resolve => setTimeout(resolve, 2000));
 
 
+
         const data = await page.$eval('.result-table', (element) => { return element.innerHTML });
 
         res.send({
@@ -93,7 +94,8 @@ app.post("/api/electoral-search", async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        // res.status(500).send({ message: "Internal Server Error" });
+        if (res.finished) return;
+        res.status(500).send({ message: "Incorrect Details" });
     }
 
 })
