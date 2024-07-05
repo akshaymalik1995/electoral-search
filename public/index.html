@@ -106,13 +106,14 @@
 
   <script>
     async function showCaptcha() {
-      const response = await fetch("/api/captcha");
+      // const response = await fetch("/api/captcha");
+      const response = await fetch("/api/get_captcha");
       const responseData = await response.json();
-      console.log(responseData);
+      const data = responseData.data;
       const img = document.querySelector("img");
 
-      img.id = responseData.id;
-      img.src = responseData.captcha;
+      img.id = data.id;
+      img.src = "data:image/jpg;base64," + data.captcha;
     }
 
     function getInputs() {
@@ -121,13 +122,15 @@
       const captchaData = document.querySelector(
         "input[name=captchaData]"
       ).value;
-      const pageId = document.querySelector("img").id;
-      return { epicNumber, stateCd, captchaData, pageId };
+
+      const captchaId = document.querySelector("img").id;
+      return { epicNumber, stateCd, captchaData, captchaId };
     }
 
     async function submitForm(e) {
       e.preventDefault();
       const inputs = getInputs();
+      document.querySelector("button").innerText = "Loading...";
       const response = await fetch("/api/electoral-search", {
         method: "POST",
         headers: {
@@ -135,16 +138,23 @@
         },
         body: JSON.stringify(inputs),
       });
+
+      document.querySelector("input[name=captchaData]").value = "";
       const responseData = await response.json();
+
       if (responseData.status === "error") {
         alert(responseData.message);
-
+        document.querySelector("button").innerText = "Submit";
+        showCaptcha();
         return;
       }
       const tableElement = document.createElement("table");
       tableElement.classList.add("table-auto");
       tableElement.innerHTML = responseData.data;
-      document.querySelector(".result-table").appendChild(tableElement);
+      document.querySelector(".result-table").innerHTML =
+        tableElement.outerHTML;
+      document.querySelector("button").innerText = "Submit";
+      showCaptcha();
     }
 
     document.querySelector("button").addEventListener("click", submitForm);
