@@ -105,11 +105,29 @@
   </body>
 
   <script>
+    function styleTable(tableElement) {
+      const tdElements = tableElement.querySelectorAll("td");
+      tdElements.forEach((tdElement) => {
+        tdElement.classList.add("border", "border-gray-300", "p-2");
+      });
+      const tr = tableElement.querySelectorAll("tr");
+      tr.forEach((trElement, index) => {
+        if (index % 2 === 0) {
+          trElement.classList.add("bg-gray-100");
+        }
+      });
+      return tableElement;
+    }
+
     async function showCaptcha() {
       // const response = await fetch("/api/captcha");
       const response = await fetch("/api/get_captcha");
       const responseData = await response.json();
       const data = responseData.data;
+      if (data.status === "error") {
+        console.log(data.message);
+        return;
+      }
       const img = document.querySelector("img");
 
       img.id = data.id;
@@ -166,7 +184,7 @@
       } else {
         tableElement.innerHTML = responseData.data;
         document.querySelector(".result-table").innerHTML =
-          tableElement.outerHTML;
+          styleTable(tableElement).outerHTML;
       }
 
       document.querySelector("button").innerText = "Submit";

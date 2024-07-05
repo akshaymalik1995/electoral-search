@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 
 app.post("/api/electoral-search", async (req, res) => {
     const { epicNumber, stateCd, captchaData, captchaId } = req.body;
+    console.log(captchaData, captchaId);
     let page = await browser.newPage()
 
     await page.goto('https://electoralsearch.eci.gov.in/', {
@@ -50,7 +51,8 @@ app.post("/api/electoral-search", async (req, res) => {
     page.on("request", async (request) => {
         if (request.postData() && request.url().includes("search-by-epic-from-national-display")) {
             const data = JSON.parse(request.postData());
-            const newData = { ...data, captchaData: captchaData, captchaId: captchaId };
+            const newData = { ...data, captchaData: captchaData, captchaId: captchaId, stateCd: stateCd, epicNumber: epicNumber };
+            console.log(newData);
             request.continue({
                 postData: JSON.stringify(newData)
             })
